@@ -23,6 +23,7 @@
 #ifndef _PREVIEWWIDGET_H_
 #define _PREVIEWWIDGET_H_
 
+#include <atomic>
 #include <memory>
 #include <list>
 #include <qwidget.h>
@@ -97,7 +98,7 @@ private:
     QPixmap brush;
     double expMult;
     QFuture<void> currentRender;
-    bool cancelRender;
+    std::atomic<bool> cancelRender;
     uint8_t gamma[65536];
 
     void render(QRect zone);
