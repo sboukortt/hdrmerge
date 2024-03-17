@@ -197,7 +197,7 @@ void PreviewWidget::setShowBrush() {
 
 
 void PreviewWidget::mouseEvent(QMouseEvent * event, bool pressed) {
-    int rx = mouseX = event->x(), ry = mouseY = event->y();
+    int rx = mouseX = event->position().x(), ry = mouseY = event->position().y();
     rotate(rx, ry);
     if (rx >= 0 && rx < (int)stack.getWidth() && ry >= 0 && ry < (int)stack.getHeight())
         emit pixelUnderMouse(rx, ry);
