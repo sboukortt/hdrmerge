@@ -315,13 +315,15 @@ int Launcher::run() {
 
     // Translation
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),
-                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    app.installTranslator(&qtTranslator);
+    if (qtTranslator.load(QLocale::system(), "qt", "_",
+                          QLibraryInfo::path(QLibraryInfo::TranslationsPath))) {
+        app.installTranslator(&qtTranslator);
+    }
 
     QTranslator appTranslator;
-    appTranslator.load("hdrmerge_" + QLocale::system().name(), ":/translators");
-    app.installTranslator(&appTranslator);
+    if (appTranslator.load(QLocale::system(), "hdrmerge", "_", ":/translators")) {
+        app.installTranslator(&appTranslator);
+    }
 
     parseCommandLine();
     Log::debug("Using LibRaw ", libraw_version());
