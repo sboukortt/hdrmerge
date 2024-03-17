@@ -1,23 +1,19 @@
-cmake_minimum_required(VERSION 3.4)
-
-cmake_policy(SET CMP0025 NEW)
+cmake_minimum_required(VERSION 3.10)
 
 project(hdrmerge)
 
-if(WIN32)
+if(WIN32 OR APPLE)
     if(NOT(ALGLIB_ROOT))
-        message(FATAL_ERROR "When building on Windows, you need to download 'alglib' source and define its root directory in ALGLIB_ROOT !")
-    else()
-        message(STATUS "ALGLIB_ROOT = ${ALGLIB_ROOT}")
+        include(FetchContent)
+        FetchContent_Populate(alglib
+            URL "https://www.alglib.net/translator/re/alglib-4.01.0.cpp.gpl.zip"
+            URL_HASH SHA512=d080d4f4d5879b9e2a5869c2f1a226df9de1bf436cb3a416d4f1f6e36e346f4075ee4de77cc161bd3d814bfad6604b5309c204f0c7a7a3410eec92a7d6e6ed31
+            QUIET
+        )
+        FetchContent_GetProperties(alglib)
+        set(ALGLIB_ROOT "${alglib_SOURCE_DIR}")
     endif()
-endif()
-
-if(APPLE)
-    if(NOT(ALGLIB_ROOT))
-        message(FATAL_ERROR "Passage of ALGLIB_ROOT to cmake failed. Download alglib and define its root directory in ALGLIB_ROOT")
-    else()
-        message(STATUS "ALGLIB_ROOT = ${ALGLIB_ROOT}")
-    endif()
+    message(STATUS "ALGLIB_ROOT = ${ALGLIB_ROOT}")
 endif()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas")
