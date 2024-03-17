@@ -23,6 +23,7 @@
 #include <list>
 #include <cmath>
 #include "MainWindow.hpp"
+#include <QActionGroup>
 #include <QApplication>
 #include <QFuture>
 #include <QtConcurrent/QtConcurrent>

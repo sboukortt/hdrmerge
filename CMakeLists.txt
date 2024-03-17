@@ -16,7 +16,7 @@ if(WIN32 OR APPLE)
     message(STATUS "ALGLIB_ROOT = ${ALGLIB_ROOT}")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wno-unknown-pragmas")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas")
 set(PLATFORM "")
 
 # Required and optional packages
@@ -31,7 +31,7 @@ set(CMAKE_AUTOMOC ON)
 # Generate resources automatically
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 5.6 REQUIRED Core Widgets)
+find_package(Qt6 REQUIRED Widgets Core5Compat)
 
 #include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
@@ -226,11 +226,15 @@ configure_file(
 )
 
 if(WIN32)
-    add_library(alglib-objects OBJECT ${alglib_sources})
+    add_library(alglib STATIC ${alglib_sources})
 endif()
 
 if(APPLE)
-    add_library(alglib-objects OBJECT ${alglib_sources})
+    add_library(alglib STATIC ${alglib_sources})
+endif()
+
+if(TARGET alglib)
+    target_compile_definitions(alglib PUBLIC AE_COMPILE_INTCOMP)
 endif()
 
 if(WIN32)
@@ -242,21 +246,21 @@ if(WIN32)
         ${hdrmerge_sources}
         ${hdrmerge_gui_sources}
         ${hdrmerge_moc}
-        $<TARGET_OBJECTS:alglib-objects>
         "${PLATFORM_SOURCES}"
     )
+    target_link_libraries(hdrmerge alglib)
 elseif(APPLE)
     add_executable(hdrmerge ${PLATFORM}
         src/main.cpp
         src/Launcher.cpp
         data/resources.qrc
-        $<TARGET_OBJECTS:alglib-objects>
         ${hdrmerge_translations}
         ${hdrmerge_sources}
         ${hdrmerge_gui_sources}
         ${hdrmerge_moc}
         "${PLATFORM_SOURCES}"
     )
+    target_link_libraries(hdrmerge alglib)
 else()
     add_executable(hdrmerge ${PLATFORM}
         src/main.cpp
@@ -270,7 +274,7 @@ else()
     )
 endif()
 
-target_link_libraries(hdrmerge ${STRIP} ${hdrmerge_libs} Qt5::Widgets)
+target_link_libraries(hdrmerge ${STRIP} ${hdrmerge_libs} Qt6::Widgets Qt6::Core5Compat)
 
 if(WIN32)
     # Compile a target without GUI, for the .com executable
@@ -281,13 +285,13 @@ if(WIN32)
         ${hdrmerge_translations}
         ${hdrmerge_sources}
         ${hdrmerge_moc}
-        $<TARGET_OBJECTS:alglib-objects>
         "${PLATFORM_SOURCES}"
     )
+    target_link_libraries(hdrmerge-nogui alglib)
     
-    # WARNING: ImageIO class need QImage which need Qt5::Widgets
-    #          Launcher.cpp need QApplication which need Qt5::Widgets
-    target_link_libraries(hdrmerge-nogui ${STRIP} ${hdrmerge_libs} Qt5::Widgets Qt5::Core)
+    # WARNING: ImageIO class need QImage which need Qt6::Widgets
+    #          Launcher.cpp need QApplication which need Qt6::Widgets
+    target_link_libraries(hdrmerge-nogui ${STRIP} ${hdrmerge_libs} Qt6::Widgets Qt6::Core5Compat)
     set_target_properties(hdrmerge-nogui PROPERTIES COMPILE_DEFINITIONS "NO_GUI")
     # Create the installer with makensis
     find_program(MAKENSIS_EXECUTABLE makensis.exe PATH_SUFFIXES "NSIS/Bin")
@@ -304,8 +308,8 @@ if(WIN32)
             string(REPLACE "/" "\\" MINGW_LIB_DIR "${MINGW_LIB_DIR}")
             message(STATUS "MINGW_LIB_DIR      = ${MINGW_LIB_DIR}")
 
-            set(QT5_PLUGINS_DIR "${MINGW_LIB_DIR}\\..\\share\\qt5\\plugins")
-            message(STATUS "QT5_PLUGINS_DIR    = ${QT5_PLUGINS_DIR}")
+            set(QT6_PLUGINS_DIR "${MINGW_LIB_DIR}\\..\\share\\qt6\\plugins")
+            message(STATUS "QT6_PLUGINS_DIR    = ${QT6_PLUGINS_DIR}")
 
             configure_file(
                 "${PROJECT_SOURCE_DIR}/data/setup.nsi"

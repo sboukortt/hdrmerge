@@ -225,7 +225,7 @@ void RawParameters::fromLibRaw(LibRaw & rawData) {
     maker = r.idata.make;
     model = r.idata.model;
     description = r.other.desc;
-    QDateTime dateTimeTmp = QDateTime::fromTime_t(r.other.timestamp);
+    QDateTime dateTimeTmp = QDateTime::fromSecsSinceEpoch(r.other.timestamp);
     QString dateTimeTmpText = dateTimeTmp.toString("yyyy:MM:dd hh:mm:ss");
     dateTime = dateTimeTmpText.toLatin1().constData();
     flip = r.sizes.flip;

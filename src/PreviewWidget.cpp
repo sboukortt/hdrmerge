@@ -64,7 +64,7 @@ void PreviewWidget::reload() {
 void PreviewWidget::repaintAsync() {
     cancelRender = true;
     currentRender.waitForFinished();
-    currentRender = QtConcurrent::run(this, &PreviewWidget::render, QRect(0, 0, width, height));
+    currentRender = QtConcurrent::run(&PreviewWidget::render, this, QRect(0, 0, width, height));
 }
 
 

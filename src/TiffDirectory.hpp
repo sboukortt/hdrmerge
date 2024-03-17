@@ -20,8 +20,9 @@
  *
  */
 
-#include <vector>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 #ifndef _TIFFDIRECTORY_HPP_
 #define _TIFFDIRECTORY_HPP_

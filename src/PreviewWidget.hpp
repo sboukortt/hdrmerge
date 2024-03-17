@@ -77,7 +77,7 @@ protected:
     void mouseMoveEvent(QMouseEvent * event) { mouseEvent(event, false); }
     void mouseEvent(QMouseEvent * event, bool pressed);
     void wheelEvent(QWheelEvent * event);
-    void enterEvent(QEvent * event) { update(); }
+    void enterEvent(QEnterEvent * event) { update(); }
     void leaveEvent(QEvent * event) { update(); }
 
 private slots:

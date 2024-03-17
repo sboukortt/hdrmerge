@@ -41,7 +41,7 @@ DngPropertiesDialog::DngPropertiesDialog(QWidget * parent, Qt::WindowFlags f)
 
     QWidget * bpsSelector = new QWidget(this);
     QHBoxLayout * bpsSelectorLayout = new QHBoxLayout(bpsSelector);
-    bpsSelectorLayout->setMargin(0);
+    bpsSelectorLayout->setContentsMargins(0, 0, 0, 0);
     QButtonGroup * bpsGroup = new QButtonGroup(this);
     const char * buttonLabels[] = { "16", "24", "32" };
     int bpsIndex = (bps - 16) / 8;;
@@ -55,7 +55,7 @@ DngPropertiesDialog::DngPropertiesDialog(QWidget * parent, Qt::WindowFlags f)
 
     QWidget * previewSelector = new QWidget(this);
     QHBoxLayout * previewSelectorLayout = new QHBoxLayout(previewSelector);
-    previewSelectorLayout->setMargin(0);
+    previewSelectorLayout->setContentsMargins(0, 0, 0, 0);
     QButtonGroup * previewGroup = new QButtonGroup(this);
     const char * previewLabels[] = { "Full", "Half", "None" };
     for (int i = 0; i < 3; ++i) {
@@ -75,7 +75,7 @@ DngPropertiesDialog::DngPropertiesDialog(QWidget * parent, Qt::WindowFlags f)
 
     maskFileSelector = new QWidget(this);
     QHBoxLayout * maskFileSelectorLayout = new QHBoxLayout(maskFileSelector);
-    maskFileSelectorLayout->setMargin(0);
+    maskFileSelectorLayout->setContentsMargins(0, 0, 0, 0);
     maskFileEditor = new QLineEdit(maskFileSelector);
     maskFileEditor->setMinimumWidth(200);
     auto trHelp = [&] (const char * text) { return QCoreApplication::translate("Help", text); };

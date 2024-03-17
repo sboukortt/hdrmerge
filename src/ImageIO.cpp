@@ -77,7 +77,7 @@ ImageIO::QDateInterval ImageIO::getImageCreationInterval(const QString & fileNam
     std::unique_ptr<LibRaw> rawProcessor(new LibRaw);
     QDateInterval result;
     if (rawProcessor->open_file(fileName.toLocal8Bit().constData()) == LIBRAW_SUCCESS) {
-        result.end = QDateTime::fromTime_t(rawProcessor->imgdata.other.timestamp);
+        result.end = QDateTime::fromSecsSinceEpoch(rawProcessor->imgdata.other.timestamp);
         result.start = result.end.addMSecs(-rawProcessor->imgdata.other.shutter * 1000.0);
     }
     return result;
@@ -378,7 +378,7 @@ QString ImageIO::replaceArguments(const QString & pattern, const QString & outFi
     }
     int index = 0;
     FileNameManipulator fnm(rawParameters);
-    while ((index = result.indexOf(re, index)) != -1) {
+    while ((index = re.indexIn(result, index)) != -1) {
         // What was matched?
         QString token = re.cap();
         if (token[1] == '%') {

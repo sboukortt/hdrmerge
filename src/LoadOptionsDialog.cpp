@@ -51,14 +51,14 @@ LoadOptionsDialog::LoadOptionsDialog(QWidget * parent, Qt::WindowFlags f)
 
     QWidget * fileSelector = new QWidget(this);
     QHBoxLayout * fileSelectorLayout = new QHBoxLayout(fileSelector);
-    fileSelectorLayout->setMargin(0);
+    fileSelectorLayout->setContentsMargins(0, 0, 0, 0);
     fileList = new QListWidget(fileSelector);
     fileList->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileSelectorLayout->addWidget(fileList, 1);
 
     QWidget * addRemoveButtons = new QWidget(this);
     QVBoxLayout * addRemoveButtonsLayout = new QVBoxLayout(addRemoveButtons);
-    addRemoveButtonsLayout->setMargin(0);
+    addRemoveButtonsLayout->setContentsMargins(0, 0, 0, 0);
     QPushButton * addButton = new QPushButton(tr("Add"), addRemoveButtons);
     QPushButton * removeButton = new QPushButton(tr("Remove"), addRemoveButtons);
     addRemoveButtonsLayout->addWidget(addButton, 0, Qt::AlignTop);
