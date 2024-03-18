@@ -21,6 +21,7 @@
  */
 
 #include "config.h"
+#include <QAbstractButton>
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QHBoxLayout>
