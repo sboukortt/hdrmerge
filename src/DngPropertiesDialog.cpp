@@ -52,7 +52,7 @@ DngPropertiesDialog::DngPropertiesDialog(QWidget * parent, Qt::WindowFlags f)
         bpsGroup->addButton(button, i);
         bpsSelectorLayout->addWidget(button);
     }
-    connect(bpsGroup, SIGNAL(buttonClicked(int)), this, SLOT(setBps(int)));
+    connect(bpsGroup, &QButtonGroup::idClicked, this, &DngPropertiesDialog::setBps);
 
     QWidget * previewSelector = new QWidget(this);
     QHBoxLayout * previewSelectorLayout = new QHBoxLayout(previewSelector);
@@ -65,7 +65,7 @@ DngPropertiesDialog::DngPropertiesDialog(QWidget * parent, Qt::WindowFlags f)
         previewGroup->addButton(button, 2 - i);
         previewSelectorLayout->addWidget(button);
     }
-    connect(previewGroup, SIGNAL(buttonClicked( int)), this, SLOT(setPreviewSize(int)));
+    connect(previewGroup, &QButtonGroup::idClicked, this, &DngPropertiesDialog::setPreviewSize);
 
     QSpinBox * radiusSelector = new QSpinBox(this);
     radiusSelector->setRange(0, 1000);
