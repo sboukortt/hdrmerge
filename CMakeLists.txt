@@ -41,7 +41,7 @@ find_package(ZLIB REQUIRED)
 #find_package(Boost 1.46 COMPONENTS unit_test_framework)
 
 if(WIN32 OR APPLE)
-    set(ALGLIB_INCLUDES ${ALGLIB_ROOT}/src)
+    set(ALGLIB_INCLUDE_DIRS ${ALGLIB_ROOT}/src)
     add_library(alglib STATIC
         ${ALGLIB_ROOT}/src/alglibinternal.cpp
         ${ALGLIB_ROOT}/src/alglibmisc.cpp
@@ -66,7 +66,7 @@ include_directories(
     "${LibRaw_INCLUDE_DIR}"
     "${EXIV2_INCLUDE_DIR}"
     "${ZLIB_INCLUDE_DIRS}"
-    "${ALGLIB_INCLUDES}"
+    "${ALGLIB_INCLUDE_DIRS}"
 )
 
 if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
@@ -176,7 +176,7 @@ if(WIN32)
 else()
     set(hdrmerge_libs
         "${hdrmerge_libs}"
-        "${ALGLIB_LIBRARIES}"
+        "${ALGLIB_LIB}"
     )
 endif()
 
