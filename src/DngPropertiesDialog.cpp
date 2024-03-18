@@ -21,6 +21,7 @@
  */
 
 #include <QCoreApplication>
+#include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QRadioButton>
@@ -112,16 +113,10 @@ DngPropertiesDialog::DngPropertiesDialog(QWidget * parent, Qt::WindowFlags f)
     saveOptions = new QCheckBox(tr("Save these options as the default values."));
     layout->addWidget(saveOptions, 0, Qt::AlignLeft);
 
-    QWidget * buttons = new QWidget(this);
-    QHBoxLayout * buttonsLayout = new QHBoxLayout(buttons);
-    QPushButton * acceptButton = new QPushButton(tr("Accept"), this);
-    acceptButton->setDefault(true);
-    connect(acceptButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
-    QPushButton * cancelButton = new QPushButton(tr("Cancel"), this);
-    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(reject()));
-    buttonsLayout->addWidget(acceptButton);
-    buttonsLayout->addWidget(cancelButton);
-    layout->addWidget(buttons, 0, Qt::AlignHCenter);
+    QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    layout->addWidget(buttons, 0);
 
     setLayout(layout);
     setWindowTitle(tr("DNG Properties"));

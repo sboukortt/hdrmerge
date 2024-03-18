@@ -21,11 +21,11 @@
  */
 
 #include "config.h"
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPixmap>
-#include <QPushButton>
 #include "AboutDialog.hpp"
 
 namespace hdrmerge {
@@ -40,7 +40,7 @@ AboutDialog::AboutDialog(QWidget * parent, Qt::WindowFlags f) : QDialog(parent, 
     layout->addSpacing(12);
     QLabel * text = new QLabel("<h1>HDRMerge " HDRMERGE_VERSION_STRING "</h1>"
     "<p><a href=\"http://jcelaya.github.io/hdrmerge/\">http://jcelaya.github.io/hdrmerge/</a></p>"
-    "<p>" + tr("A software for the fusion of multiple raw images into a single high dynamic range image.") + "</p>"
+    "<p>" + tr("Software for the fusion of multiple raw images into a single high dynamic range image.") + "</p>"
         "<p>Copyright &copy; 2012 Javier Celaya (jcelaya@gmail.com)</p>"
         "<p>This is free software: you can redistribute it and/or modify it under the terms of the GNU "
         "General Public License as published by the Free Software Foundation, either version 3 of the License, "
@@ -48,12 +48,10 @@ AboutDialog::AboutDialog(QWidget * parent, Qt::WindowFlags f) : QDialog(parent, 
     text->setWordWrap(true);
     layout->addWidget(text);
     layout->setAlignment(text, Qt::AlignTop);
-    QPushButton * acceptButton = new QPushButton(tr("Accept"), this);
-    acceptButton->setDefault(true);
-    connect(acceptButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+    QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Close, this);
+    connect(buttonBox, &QDialogButtonBox::clicked, this, &QDialog::accept);
     buttonLayout->addWidget(logoText);
-    buttonLayout->addWidget(acceptButton);
-    buttonLayout->setAlignment(acceptButton, Qt::AlignCenter);
+    buttonLayout->addWidget(buttonBox);
     setWindowTitle(tr("About HDRMerge..."));
     buttonLayout->setSizeConstraint(QLayout::SetFixedSize);
 }

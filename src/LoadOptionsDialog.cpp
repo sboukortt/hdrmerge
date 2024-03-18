@@ -20,6 +20,7 @@
  *
  */
 
+#include <QDialogButtonBox>
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QButtonGroup>
@@ -56,14 +57,10 @@ LoadOptionsDialog::LoadOptionsDialog(QWidget * parent, Qt::WindowFlags f)
     fileList->setSelectionMode(QAbstractItemView::ExtendedSelection);
     fileSelectorLayout->addWidget(fileList, 1);
 
-    QWidget * addRemoveButtons = new QWidget(this);
-    QVBoxLayout * addRemoveButtonsLayout = new QVBoxLayout(addRemoveButtons);
-    addRemoveButtonsLayout->setContentsMargins(0, 0, 0, 0);
-    QPushButton * addButton = new QPushButton(tr("Add"), addRemoveButtons);
-    QPushButton * removeButton = new QPushButton(tr("Remove"), addRemoveButtons);
-    addRemoveButtonsLayout->addWidget(addButton, 0, Qt::AlignTop);
-    addRemoveButtonsLayout->addWidget(removeButton, 0, Qt::AlignTop);
-    addRemoveButtonsLayout->addStretch(1);
+    QDialogButtonBox * addRemoveButtons = new QDialogButtonBox(this);
+    addRemoveButtons->setOrientation(Qt::Vertical);
+    QPushButton * addButton = addRemoveButtons->addButton(tr("Add"), QDialogButtonBox::ActionRole);
+    QPushButton * removeButton = addRemoveButtons->addButton(tr("Remove"), QDialogButtonBox::ActionRole);
     fileSelectorLayout->addWidget(addRemoveButtons, 0);
     layout->addWidget(fileSelector, 1);
     connect(addButton, SIGNAL(clicked(bool)), this, SLOT(addFiles()));
@@ -87,16 +84,10 @@ LoadOptionsDialog::LoadOptionsDialog(QWidget * parent, Qt::WindowFlags f)
     customWhiteLevelSpinBox->setToolTip(tr("Custom white level."));
     layout->addWidget(customWhiteLevelSpinBox, 0);
 
-    QWidget * buttons = new QWidget(this);
-    QHBoxLayout * buttonsLayout = new QHBoxLayout(buttons);
-    QPushButton * acceptButton = new QPushButton(tr("Accept"), this);
-    acceptButton->setDefault(true);
-    connect(acceptButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
-    QPushButton * cancelButton = new QPushButton(tr("Cancel"), this);
-    connect(cancelButton, SIGNAL(clicked(bool)), this, SLOT(reject()));
-    buttonsLayout->addWidget(acceptButton);
-    buttonsLayout->addWidget(cancelButton);
-    layout->addWidget(buttons, 0, Qt::AlignHCenter);
+    QDialogButtonBox * buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
+    connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+    layout->addWidget(buttons, 0);
 
     setLayout(layout);
     setWindowTitle(tr("Open raw images"));
