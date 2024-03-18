@@ -260,13 +260,13 @@ void DngFloatWriter::createRawIFD() {
     aa[3] = aa[1] + params->width;
     rawIFD.addEntry(ACTIVEAREA, IFD::LONG, 4, aa);
     rawIFD.addEntry(BLACKLEVELREP, IFD::SHORT, 2, cfaPatternDim);
-    uint16_t cblack[cfaRows * cfaCols];
+    QVarLengthArray<uint16_t, 6 * 8> cblack(cfaRows * cfaCols);
     for (int row = 0; row < cfaRows; ++row) {
         for (int col = 0; col < cfaCols; ++col) {
             cblack[row*cfaCols + col] = params->blackAt(col, row);
         }
     }
-    rawIFD.addEntry(BLACKLEVEL, IFD::SHORT, cfaRows * cfaCols, cblack);
+    rawIFD.addEntry(BLACKLEVEL, IFD::SHORT, cfaRows * cfaCols, cblack.constData());
     rawIFD.addEntry(WHITELEVEL, IFD::SHORT, params->max);
     rawIFD.addEntry(SAMPLESPERPIXEL, IFD::SHORT, 1);
     rawIFD.addEntry(BITSPERSAMPLE, IFD::SHORT, bps);
@@ -280,15 +280,15 @@ void DngFloatWriter::createRawIFD() {
 
     calculateTiles();
     uint32_t numTiles = tilesAcross * tilesDown;
-    uint32_t buffer[numTiles];
+    QVarLengthArray<uint32_t> buffer(numTiles);
     rawIFD.addEntry(TILEWIDTH, IFD::LONG, tileWidth);
     rawIFD.addEntry(TILELENGTH, IFD::LONG, tileLength);
-    rawIFD.addEntry(TILEOFFSETS, IFD::LONG, numTiles, buffer);
-    rawIFD.addEntry(TILEBYTES, IFD::LONG, numTiles, buffer);
+    rawIFD.addEntry(TILEOFFSETS, IFD::LONG, numTiles, buffer.constData());
+    rawIFD.addEntry(TILEBYTES, IFD::LONG, numTiles, buffer.constData());
 
     rawIFD.addEntry(PHOTOINTERPRETATION, IFD::SHORT, TIFF_CFA);
     rawIFD.addEntry(CFAPATTERNDIM, IFD::SHORT, 2, cfaPatternDim);
-    uint8_t cfaPattern[cfaRows * cfaCols];
+    QVarLengthArray<uint8_t, 6 * 8> cfaPattern(cfaRows * cfaCols);
     for (int row = 0; row < cfaRows; ++row) {
         for (int col = 0; col < cfaCols; ++col) {
             cfaPattern[row*cfaCols + col] = params->FC(col, row);
@@ -299,7 +299,7 @@ void DngFloatWriter::createRawIFD() {
             if (i == 3) i = 1;
         }
     }
-    rawIFD.addEntry(CFAPATTERN, IFD::BYTE, cfaRows * cfaCols, cfaPattern);
+    rawIFD.addEntry(CFAPATTERN, IFD::BYTE, cfaRows * cfaCols, cfaPattern.constData());
     uint8_t cfaPlaneColor[] = { 0, 1, 2, 3 };
     rawIFD.addEntry(CFAPLANECOLOR, IFD::BYTE, params->colors, cfaPlaneColor);
     rawIFD.addEntry(CFALAYOUT, IFD::SHORT, 1);
@@ -508,8 +508,8 @@ size_t DngFloatWriter::rawSize() {
 
 void DngFloatWriter::writeRawData() {
     size_t tileCount = tilesAcross * tilesDown;
-    uint32_t tileOffsets[tileCount];
-    uint32_t tileBytes[tileCount];
+    QVarLengthArray<uint32_t> tileOffsets(tileCount);
+    QVarLengthArray<uint32_t> tileBytes(tileCount);
     int bytesps = bps >> 3;
     uLongf dstLen = tileWidth * tileLength * bytesps;
 
@@ -553,8 +553,8 @@ void DngFloatWriter::writeRawData() {
         delete [] uBuffer;
     }
 
-    rawIFD.setValue(TILEOFFSETS, tileOffsets);
-    rawIFD.setValue(TILEBYTES, tileBytes);
+    rawIFD.setValue(TILEOFFSETS, tileOffsets.constData());
+    rawIFD.setValue(TILEBYTES, tileBytes.constData());
 }
 
 } // namespace hdrmerge

@@ -22,6 +22,8 @@
 
 #include <algorithm>
 
+#include <QVarLengthArray>
+
 #include "BoxBlur.hpp"
 #include "ImageStack.hpp"
 #include "Log.hpp"
@@ -126,7 +128,7 @@ void ImageStack::calculateSaturationLevel(const RawParameters & params, bool use
 void ImageStack::align() {
     if (images.size() > 1) {
         Timer t("Align");
-        size_t errors[images.size()];
+        QVarLengthArray<size_t> errors(images.size());
         #pragma omp parallel for schedule(dynamic)
         for (size_t i = 0; i < images.size(); ++i) {
             images[i].preScale();
@@ -209,7 +211,7 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
     size_t width = mask.getWidth(), height = mask.getHeight();
     Array2D<uint8_t> result(width, height);
 
-    int circArray[2 * radius + 1]; // holds the y coords of the filter's mask
+    QVarLengthArray<int> circArray(2 * radius + 1); // holds the y coords of the filter's mask
     // compute_border(circArray, radius)
     for (int i = 0; i < radius * 2 + 1; i++) {
         double tmp;
@@ -223,9 +225,9 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
     }
     // offset the circ pointer by radius so the range of the array
     //     is [-radius] to [radius]
-    int * circ = circArray + radius;
+    int * circ = circArray.data() + radius;
 
-    const uint8_t * bufArray[height + 2*radius];
+    QVarLengthArray<const uint8_t *> bufArray(height + 2*radius);
     for (int i = 0; i < radius; i++) {
         bufArray[i] = &mask[0];
     }
@@ -236,7 +238,7 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
         bufArray[i + height + radius] = &mask[(height - 1) * width];
     }
     // offset the buf pointer
-    const uint8_t ** buf = bufArray + radius;
+    const uint8_t ** buf = bufArray.data() + radius;
 
     #pragma omp parallel
     {
@@ -307,7 +309,7 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
     size_t width = mask.getWidth(), height = mask.getHeight();
     Array2D<uint8_t> result(width, height);
 
-    int circArray[2 * radius + 1]; // holds the y coords of the filter's mask
+    QVarLengthArray<int> circArray(2 * radius + 1); // holds the y coords of the filter's mask
     // compute_border(circArray, radius)
     for (int i = 0; i < radius * 2 + 1; i++) {
         double tmp;
@@ -321,9 +323,9 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
     }
     // offset the circ pointer by radius so the range of the array
     //     is [-radius] to [radius]
-    int * circ = circArray + radius;
+    int * circ = circArray.data() + radius;
 
-    const uint8_t * bufArray[height + 2*radius];
+    QVarLengthArray<const uint8_t *> bufArray(height + 2*radius);
     for (int i = 0; i < radius; i++) {
         bufArray[i] = &mask[0];
     }
@@ -334,12 +336,12 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
         bufArray[i + height + radius] = &mask[(height - 1) * width];
     }
     // offset the buf pointer
-    const uint8_t ** buf = bufArray + radius;
+    const uint8_t ** buf = bufArray.data() + radius;
 
     #pragma omp parallel
     {
-        uint8_t buffer[width * (radius + 1)];
-        uint8_t *maxArray[radius+1];
+        QVarLengthArray<uint8_t> buffer(width * (radius + 1));
+        QVarLengthArray<uint8_t *> maxArray(radius+1);
         for (int i = 0; i <= radius; i++) {
             maxArray[i] = &buffer[i*width];
         }
