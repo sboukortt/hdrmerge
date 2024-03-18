@@ -39,7 +39,6 @@ add_definitions(${QT_DEFINITIONS})
 find_package(LibRaw REQUIRED)
 find_package(Exiv2 REQUIRED)
 find_package(ZLIB REQUIRED)
-find_package(OpenMP)
 
 # Commented-out as it doesn't link
 #find_package(Boost 1.46 COMPONENTS unit_test_framework)
@@ -57,14 +56,8 @@ include_directories(
     "${ALGLIB_INCLUDES}"
 )
 
-if(NOT(CMAKE_BUILD_TYPE))
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    if(OPENMP_FOUND)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-    endif()
+if(NOT (CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"))
+    find_package(OpenMP)
     if(CMAKE_COMPILER_IS_GNUCC)
         set(STRIP -s)
     endif()
@@ -275,6 +268,9 @@ else()
 endif()
 
 target_link_libraries(hdrmerge ${STRIP} ${hdrmerge_libs} Qt6::Widgets)
+if(OpenMP_FOUND)
+    target_link_libraries(hdrmerge OpenMP::OpenMP_CXX)
+endif()
 
 if(WIN32)
     # Compile a target without GUI, for the .com executable
@@ -288,6 +284,9 @@ if(WIN32)
         "${PLATFORM_SOURCES}"
     )
     target_link_libraries(hdrmerge-nogui alglib)
+    if(OpenMP_FOUND)
+        target_link_libraries(hdrmerge-nogui OpenMP::OpenMP_CXX)
+    endif()
     
     # WARNING: ImageIO class need QImage which need Qt6::Widgets
     #          Launcher.cpp need QApplication which need Qt6::Widgets
