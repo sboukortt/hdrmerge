@@ -55,7 +55,7 @@ void PreviewWidget::reload() {
         width = stack.getWidth();
         height = stack.getHeight();
     }
-    pixmap.reset();
+    pixmap = QPixmap();
     resize(QSize(0, 0));
     repaintAsync();
 }
@@ -90,17 +90,17 @@ void PreviewWidget::rotate(int & x, int & y) const {
 
 
 QSize PreviewWidget::sizeHint() const {
-    return pixmap.get() ? pixmap->size() : QSize(0, 0);
+    return pixmap.size();
 }
 
 
 void PreviewWidget::paintEvent(QPaintEvent * event) {
-    if (pixmap.get()) {
-        QPainter painter(this);
-        painter.drawPixmap(0, 0, *pixmap);
-        if ((addPixels || rmPixels) && underMouse()) {
-            painter.drawPixmap(mouseX - radius, mouseY - radius, brush);
-        }
+    if (pixmap.isNull()) return;
+
+    QPainter painter(this);
+    painter.drawPixmap(0, 0, pixmap);
+    if ((addPixels || rmPixels) && underMouse()) {
+        painter.drawPixmap(mouseX - radius, mouseY - radius, brush);
     }
 }
 
@@ -156,12 +156,11 @@ void PreviewWidget::render(QRect zone) {
 
 
 void PreviewWidget::paintImage(QPoint where, const QImage & image) {
-    if (!pixmap.get()) {
-        pixmap.reset(new QPixmap);
-        *pixmap = QPixmap::fromImage(image);
-        resize(pixmap->size());
+    if (pixmap.isNull()) {
+        pixmap = QPixmap::fromImage(image);
+        resize(pixmap.size());
     } else {
-        QPainter painter(pixmap.get());
+        QPainter painter(&pixmap);
         painter.drawImage(where, image);
     }
     update(where.x(), where.y(), image.width(), image.height());

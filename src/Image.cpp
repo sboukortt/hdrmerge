@@ -226,7 +226,7 @@ void Image::preScale() {
     size_t curHeight = height;
     Array2D<uint16_t> * r2 = this;
 
-    scaled.reset(new Array2D<uint16_t>[scaleSteps]);
+    scaled = std::make_unique<Array2D<uint16_t>[]>(scaleSteps);
     for (int s = 0; s < scaleSteps; ++s) {
         scaled[s].resize(curWidth >>= 1, curHeight >>= 1);
         for (size_t y = 0, prevY = 0; y < curHeight; ++y, prevY += 2) {

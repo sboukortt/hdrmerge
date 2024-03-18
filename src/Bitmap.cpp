@@ -56,7 +56,7 @@ void Bitmap::resize(size_t w, size_t h) {
     numBits = w * h;
     size_t extra = numBits & 31 ? 1 : 0;
     size = (numBits >> 5) + extra;
-    bits.reset(new uint32_t[size]);
+    bits = std::make_unique<uint32_t[]>(size);
     bits[size-1] &= allOnes >> (32 - (numBits & 31));
 }
 

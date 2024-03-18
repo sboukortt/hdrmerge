@@ -34,7 +34,7 @@
 namespace hdrmerge {
 
 Image ImageIO::loadRawImage(const QString& filename, RawParameters & rawParameters, int shot_select) {
-    std::unique_ptr<LibRaw> rawProcessor(new LibRaw);
+    auto rawProcessor = std::make_unique<LibRaw>();
     auto & d = rawProcessor->imgdata;
 #if LIBRAW_VERSION >= LIBRAW_MAKE_VERSION(0, 21, 0)
     d.rawparams.shot_select = shot_select;
@@ -62,7 +62,7 @@ Image ImageIO::loadRawImage(const QString& filename, RawParameters & rawParamete
 }
 
 int ImageIO::getFrameCount(RawParameters & rawParameters) {
-    std::unique_ptr<LibRaw> rawProcessor(new LibRaw);
+    auto rawProcessor = std::make_unique<LibRaw>();
     auto & d = rawProcessor->imgdata;
     if (rawProcessor->open_file(rawParameters.fileName.toLocal8Bit().constData()) == LIBRAW_SUCCESS) {
         Log::msg(Log::DEBUG, "Number of frames : ", d.idata.raw_count);
@@ -74,7 +74,7 @@ int ImageIO::getFrameCount(RawParameters & rawParameters) {
 }
 
 ImageIO::QDateInterval ImageIO::getImageCreationInterval(const QString & fileName) {
-    std::unique_ptr<LibRaw> rawProcessor(new LibRaw);
+    auto rawProcessor = std::make_unique<LibRaw>();
     QDateInterval result;
     if (rawProcessor->open_file(fileName.toLocal8Bit().constData()) == LIBRAW_SUCCESS) {
         result.end = QDateTime::fromSecsSinceEpoch(rawProcessor->imgdata.other.timestamp);
@@ -247,7 +247,7 @@ static void prepareRawBuffer(LibRaw & rawProcessor) {
 
 QImage ImageIO::renderPreview(const Array2D<float> & rawData, const RawParameters & params, float expShift, bool halfSize) {
     Timer t("Render preview");
-    std::unique_ptr<LibRaw> rawProcessor(new LibRaw);
+    auto rawProcessor = std::make_unique<LibRaw>();
     auto & d = rawProcessor->imgdata;
     d.params.user_sat = 65535;
     d.params.user_black = 0;

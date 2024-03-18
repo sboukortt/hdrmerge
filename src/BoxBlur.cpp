@@ -27,7 +27,7 @@ namespace hdrmerge {
 
 void BoxBlur::blur(size_t radius) {
     // From http://blog.ivank.net/fastest-gaussian-blur.html
-    tmp.reset(new float[width*height]);
+    tmp = std::make_unique<float[]>(width*height);
     size_t hr = std::round(radius*0.39);
     boxBlur(hr);
     boxBlur(hr);

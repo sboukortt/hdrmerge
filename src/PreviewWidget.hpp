@@ -87,7 +87,7 @@ private slots:
 private:
     Q_OBJECT
 
-    std::unique_ptr<QPixmap> pixmap;
+    QPixmap pixmap;
     ImageStack & stack;
     size_t width, height;
     int flip;

@@ -74,7 +74,7 @@ public:
         width = w;
         height = h;
         dx = dy = 0;
-        data.reset(new T[w*h]);
+        data = std::make_unique<T[]>(w*h);
         alignedData = data.get();
     }
 
