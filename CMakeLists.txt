@@ -43,8 +43,24 @@ find_package(ZLIB REQUIRED)
 # Commented-out as it doesn't link
 #find_package(Boost 1.46 COMPONENTS unit_test_framework)
 
-if(WIN32)
+if(WIN32 OR APPLE)
     set(ALGLIB_INCLUDES ${ALGLIB_ROOT}/src)
+    add_library(alglib STATIC
+        ${ALGLIB_ROOT}/src/alglibinternal.cpp
+        ${ALGLIB_ROOT}/src/alglibmisc.cpp
+        ${ALGLIB_ROOT}/src/ap.cpp
+        ${ALGLIB_ROOT}/src/dataanalysis.cpp
+        ${ALGLIB_ROOT}/src/diffequations.cpp
+        ${ALGLIB_ROOT}/src/fasttransforms.cpp
+        ${ALGLIB_ROOT}/src/integration.cpp
+        ${ALGLIB_ROOT}/src/interpolation.cpp
+        ${ALGLIB_ROOT}/src/linalg.cpp
+        ${ALGLIB_ROOT}/src/optimization.cpp
+        ${ALGLIB_ROOT}/src/solvers.cpp
+        ${ALGLIB_ROOT}/src/specialfunctions.cpp
+        ${ALGLIB_ROOT}/src/statistics.cpp
+    )
+    target_compile_definitions(alglib PUBLIC AE_COMPILE_SPLINE1D)
 else()
     find_package(Alglib REQUIRED)
 endif()
@@ -138,42 +154,6 @@ set(hdrmerge_translations
     data/hdrmerge_es.ts
 )
 
-if(WIN32)
-    set(alglib_sources
-        ${ALGLIB_ROOT}/src/alglibinternal.cpp
-        ${ALGLIB_ROOT}/src/alglibmisc.cpp
-        ${ALGLIB_ROOT}/src/ap.cpp
-        ${ALGLIB_ROOT}/src/dataanalysis.cpp
-        ${ALGLIB_ROOT}/src/diffequations.cpp
-        ${ALGLIB_ROOT}/src/fasttransforms.cpp
-        ${ALGLIB_ROOT}/src/integration.cpp
-        ${ALGLIB_ROOT}/src/interpolation.cpp
-        ${ALGLIB_ROOT}/src/linalg.cpp
-        ${ALGLIB_ROOT}/src/optimization.cpp
-        ${ALGLIB_ROOT}/src/solvers.cpp
-        ${ALGLIB_ROOT}/src/specialfunctions.cpp
-        ${ALGLIB_ROOT}/src/statistics.cpp
-    )
-endif()
-
-if(APPLE)
-    set(alglib_sources
-        ${ALGLIB_ROOT}/src/alglibinternal.cpp
-        ${ALGLIB_ROOT}/src/alglibmisc.cpp
-        ${ALGLIB_ROOT}/src/ap.cpp
-        ${ALGLIB_ROOT}/src/dataanalysis.cpp
-        ${ALGLIB_ROOT}/src/diffequations.cpp
-        ${ALGLIB_ROOT}/src/fasttransforms.cpp
-        ${ALGLIB_ROOT}/src/integration.cpp
-        ${ALGLIB_ROOT}/src/interpolation.cpp
-        ${ALGLIB_ROOT}/src/linalg.cpp
-        ${ALGLIB_ROOT}/src/optimization.cpp
-        ${ALGLIB_ROOT}/src/solvers.cpp
-        ${ALGLIB_ROOT}/src/specialfunctions.cpp
-        ${ALGLIB_ROOT}/src/statistics.cpp
-    )
-endif()
-
 # Libs
 set(hdrmerge_libs
     "${LibRaw_r_LIBRARIES}"
@@ -218,53 +198,18 @@ configure_file(
     "${PROJECT_BINARY_DIR}/translations.qrc"
 )
 
-if(WIN32)
-    add_library(alglib STATIC ${alglib_sources})
-endif()
-
-if(APPLE)
-    add_library(alglib STATIC ${alglib_sources})
-endif()
-
-if(TARGET alglib)
-    target_compile_definitions(alglib PUBLIC AE_COMPILE_SPLINE1D)
-endif()
-
-if(WIN32)
-    add_executable(hdrmerge ${PLATFORM}
-        src/main.cpp
-        src/Launcher.cpp
-        data/resources.qrc
-        ${hdrmerge_translations}
-        ${hdrmerge_sources}
-        ${hdrmerge_gui_sources}
-        ${hdrmerge_moc}
-        "${PLATFORM_SOURCES}"
-    )
+add_executable(hdrmerge ${PLATFORM}
+    src/main.cpp
+    src/Launcher.cpp
+    data/resources.qrc
+    ${hdrmerge_translations}
+    ${hdrmerge_sources}
+    ${hdrmerge_gui_sources}
+    ${hdrmerge_moc}
+    "${PLATFORM_SOURCES}"
+)
+if(WIN32 OR APPLE)
     target_link_libraries(hdrmerge alglib)
-elseif(APPLE)
-    add_executable(hdrmerge ${PLATFORM}
-        src/main.cpp
-        src/Launcher.cpp
-        data/resources.qrc
-        ${hdrmerge_translations}
-        ${hdrmerge_sources}
-        ${hdrmerge_gui_sources}
-        ${hdrmerge_moc}
-        "${PLATFORM_SOURCES}"
-    )
-    target_link_libraries(hdrmerge alglib)
-else()
-    add_executable(hdrmerge ${PLATFORM}
-        src/main.cpp
-        src/Launcher.cpp
-        data/resources.qrc
-        ${hdrmerge_translations}
-        ${hdrmerge_sources}
-        ${hdrmerge_gui_sources}
-        ${hdrmerge_moc}
-        "${PLATFORM_SOURCES}"
-    )
 endif()
 
 target_link_libraries(hdrmerge ${STRIP} ${hdrmerge_libs} Qt6::Widgets)
