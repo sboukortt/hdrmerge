@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <QImage>
 #include <QString>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QFileInfo>
 #include <libraw.h>
 #include "ImageIO.hpp"
@@ -370,39 +370,46 @@ QString ImageIO::getInputPath() const {
 
 QString ImageIO::replaceArguments(const QString & pattern, const QString & outFileName) const {
     QString result(pattern);
-    QRegExp re;
+    QRegularExpression re;
     if (outFileName == "") {
-        re = QRegExp("%(?:i[fFdn]\\[(-?[0-9]+)\\]|%)");
+        re = QRegularExpression("%(?:i[fFdn]\\[(-?[0-9]+)\\]|%)");
     } else {
-        re = QRegExp("%(?:o[fd]|i[fFdn]\\[(-?[0-9]+)\\]|%)");
+        re = QRegularExpression("%(?:o[fd]|i[fFdn]\\[(-?[0-9]+)\\]|%)");
     }
-    int index = 0;
     FileNameManipulator fnm(rawParameters);
-    while ((index = re.indexIn(result, index)) != -1) {
+    int offset = 0;
+    for (QRegularExpressionMatch match; match = re.match(result, offset), match.hasMatch();) {
         // What was matched?
-        QString token = re.cap();
+        QString token = match.captured();
+        int index = match.capturedStart();
         if (token[1] == '%') {
             result.replace(index, 2, '%');
+            offset = index + 1;
         } else if (token[1] == 'o') {
+            QString replacement;
             if (token[2] == 'f') {
-                result.replace(index, 3, fnm.getBaseName(outFileName));
+                replacement = fnm.getBaseName(outFileName);
             } else {
-                result.replace(index, 3, fnm.getDirName(outFileName));
+                replacement = fnm.getDirName(outFileName);
             }
+            result.replace(index, 3, replacement);
+            offset = index + replacement.length();
         } else { // 'i'
-            int imageIndex = re.cap(1).toInt();
-            int length = re.cap(1).length() + 5;
+            int imageIndex = match.capturedView(1).toInt();
+            int length = match.capturedLength(1) + 5;
+            QString replacement;
             if (token[2] == 'f') {
-                result.replace(index, length, fnm.getInputBaseName(imageIndex));
+                replacement = fnm.getInputBaseName(imageIndex);
             } else if (token[2] == 'F') {
-                result.replace(index, length, fnm.getInputBaseNameNoExt(imageIndex));
+                replacement = fnm.getInputBaseNameNoExt(imageIndex);
             } else if (token[2] == 'd') {
-                result.replace(index, length, fnm.getInputDirName(imageIndex));
+                replacement = fnm.getInputDirName(imageIndex);
             } else { // 'n'
-                result.replace(index, length, fnm.getInputNumberSuffix(imageIndex));
+                replacement = fnm.getInputNumberSuffix(imageIndex);
             }
+            result.replace(index, length, replacement);
+            offset = index + replacement.length();
         }
-        index++;
     }
     return result;
 }

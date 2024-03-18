@@ -31,7 +31,7 @@ set(CMAKE_AUTOMOC ON)
 # Generate resources automatically
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED Widgets Core5Compat)
+find_package(Qt6 REQUIRED Widgets)
 
 #include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS})
@@ -274,7 +274,7 @@ else()
     )
 endif()
 
-target_link_libraries(hdrmerge ${STRIP} ${hdrmerge_libs} Qt6::Widgets Qt6::Core5Compat)
+target_link_libraries(hdrmerge ${STRIP} ${hdrmerge_libs} Qt6::Widgets)
 
 if(WIN32)
     # Compile a target without GUI, for the .com executable
@@ -291,7 +291,7 @@ if(WIN32)
     
     # WARNING: ImageIO class need QImage which need Qt6::Widgets
     #          Launcher.cpp need QApplication which need Qt6::Widgets
-    target_link_libraries(hdrmerge-nogui ${STRIP} ${hdrmerge_libs} Qt6::Widgets Qt6::Core5Compat)
+    target_link_libraries(hdrmerge-nogui ${STRIP} ${hdrmerge_libs} Qt6::Widgets)
     set_target_properties(hdrmerge-nogui PROPERTIES COMPILE_DEFINITIONS "NO_GUI")
     # Create the installer with makensis
     find_program(MAKENSIS_EXECUTABLE makensis.exe PATH_SUFFIXES "NSIS/Bin")
