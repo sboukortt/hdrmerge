@@ -24,8 +24,8 @@
 #include <QScrollBar>
 #include <QMouseEvent>
 #include <QCursor>
-using namespace hdrmerge;
 
+namespace hdrmerge {
 
 void DraggableScrollArea::show(int x, int y) {
     ensureVisible(x, y, 0, 0);
@@ -71,4 +71,6 @@ void DraggableScrollArea::mouseMoveEvent(QMouseEvent * event) {
 
 bool DraggableScrollArea::isDragging() {
     return dragging;
+}
+
 }

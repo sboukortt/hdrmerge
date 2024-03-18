@@ -24,10 +24,8 @@
 #include <iostream>
 #include "ExifTransfer.hpp"
 #include "Log.hpp"
-using namespace hdrmerge;
-using namespace Exiv2;
-using namespace std;
 
+namespace hdrmerge {
 
 class ExifTransfer {
 public:
@@ -78,7 +76,7 @@ void ExifTransfer::copyMetadata() {
     }
     try {
         dst->writeMetadata();
-        FileIo fileIo(dstFile.toLocal8Bit().constData());
+        Exiv2::FileIo fileIo(dstFile.toLocal8Bit().constData());
         fileIo.open("wb");
         fileIo.write(dst->io());
         fileIo.close();
@@ -110,7 +108,7 @@ void ExifTransfer::copyIPTC() {
 }
 
 
-static bool excludeExifDatum(const Exifdatum & datum) {
+static bool excludeExifDatum(const Exiv2::Exifdatum & datum) {
     static const char * previewKeys[] {
         "Exif.OlympusCs.PreviewImageStart",
         "Exif.OlympusCs.PreviewImageLength",
@@ -179,4 +177,6 @@ void ExifTransfer::copyEXIF() {
             dstExif.add(datum);
         }
     }
+}
+
 }

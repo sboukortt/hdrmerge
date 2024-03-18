@@ -30,8 +30,8 @@
 #include "ImageIO.hpp"
 #include "DngFloatWriter.hpp"
 #include "Log.hpp"
-using namespace std;
-using namespace hdrmerge;
+
+namespace hdrmerge {
 
 Image ImageIO::loadRawImage(const QString& filename, RawParameters & rawParameters, int shot_select) {
     std::unique_ptr<LibRaw> rawProcessor(new LibRaw);
@@ -95,7 +95,7 @@ int ImageIO::load(const LoadOptions & options, ProgressIndicator & progress) {
         Timer t("Load files");
         if(numImages == 1) { // check for multiframe raw files
             const QString name = options.fileNames[0];
-            unique_ptr<RawParameters> params(new RawParameters(name));
+            auto params = std::make_unique<RawParameters>(name);
             int frameCount = getFrameCount(*params);
             step = 100 / (frameCount + 1);
             p = 0;
@@ -106,7 +106,7 @@ int ImageIO::load(const LoadOptions & options, ProgressIndicator & progress) {
                 for (int i = 0; i < frameCount; ++i) {
                     progress.advance(p, "Loading %1", name.toLocal8Bit().constData());
                     p += step;
-                    unique_ptr<RawParameters> params(new RawParameters(name));
+                    auto params = std::make_unique<RawParameters>(name);
 
                     Image image = loadRawImage(name, *params, i);
                     if (!image.good()) {
@@ -131,7 +131,7 @@ int ImageIO::load(const LoadOptions & options, ProgressIndicator & progress) {
                 const QString name = options.fileNames[i];
                 progress.advance(p, "Loading %1", name.toLocal8Bit().constData());
                 p += step;
-                unique_ptr<RawParameters> params(new RawParameters(name));
+                auto params = std::make_unique<RawParameters>(name);
 
                 Image image = loadRawImage(name, *params);
                 if (!image.good()) {
@@ -179,7 +179,7 @@ int ImageIO::load(const LoadOptions & options, ProgressIndicator & progress) {
 
 
 void ImageIO::save(const SaveOptions & options, ProgressIndicator & progress) {
-    string cropped = stack.isCropped() ? " cropped" : "";
+    std::string cropped = stack.isCropped() ? " cropped" : "";
     Log::msg(2, "Writing ", options.fileName, ", ", options.bps, "-bit, ", stack.getWidth(), 'x', stack.getHeight(), cropped);
 
     progress.advance(0, "Rendering image");
@@ -239,9 +239,9 @@ static void prepareRawBuffer(LibRaw & rawProcessor) {
     r.raw_alloc = std::malloc(numPixels * sizeof(ushort));
     r.raw_image = (ushort*) r.raw_alloc;
     s.raw_pitch = s.raw_width*2;
-    copy_n(&i.color, 1, &r.color);
-    copy_n(&i.sizes, 1, &r.sizes);
-    copy_n(&i.idata, 1, &r.iparams);
+    std::copy_n(&i.color, 1, &r.color);
+    std::copy_n(&i.sizes, 1, &r.sizes);
+    std::copy_n(&i.idata, 1, &r.iparams);
 }
 
 
@@ -257,7 +257,7 @@ QImage ImageIO::renderPreview(const Array2D<float> & rawData, const RawParameter
     d.params.highlight = 2;
     d.params.user_qual = 3;
     d.params.med_passes = 0;
-    copy_n(params.camMul, 4, d.params.user_mul);
+    std::copy_n(params.camMul, 4, d.params.user_mul);
     d.params.user_flip = 0;
     d.params.exp_correc = 1;
     d.params.exp_shift = expShift;
@@ -305,12 +305,12 @@ QImage ImageIO::renderPreview(const Array2D<float> & rawData, const RawParameter
 
 class FileNameManipulator {
 public:
-    FileNameManipulator(const vector<unique_ptr<RawParameters>> & paramList) {
+    FileNameManipulator(const std::vector<std::unique_ptr<RawParameters>> & paramList) {
         names.reserve(paramList.size());
         for (auto & rp : paramList) {
             names.push_back(rp->fileName);
         }
-        sort(names.begin(), names.end());
+        std::sort(names.begin(), names.end());
     }
 
     QString getInputBaseName(int i) {
@@ -346,7 +346,7 @@ public:
     }
 
 private:
-    vector<QString> names;
+    std::vector<QString> names;
     int adjustIndex(int i) {
         if (i < 0)
             i = names.size() + i;
@@ -412,4 +412,6 @@ QString ImageIO::replaceArguments(const QString & pattern, const QString & outFi
         }
     }
     return result;
+}
+
 }

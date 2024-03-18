@@ -35,8 +35,6 @@
 #include "RawParameters.hpp"
 #include "Log.hpp"
 #include "ExifTransfer.hpp"
-using namespace std;
-
 
 namespace hdrmerge {
 
@@ -179,7 +177,7 @@ void DngFloatWriter::createMainIFD() {
 
     // Profile
     mainIFD.addEntry(CALIBRATIONILLUMINANT, IFD::SHORT, TIFF_D65);
-    string profName(params->maker + " " + params->model);
+    std::string profName(params->maker + " " + params->model);
     mainIFD.addEntry(PROFILENAME, profName);
     int32_t colorMatrix[24];
     for (int row = 0, i = 0; row < params->colors; ++row) {
@@ -336,7 +334,7 @@ void DngFloatWriter::renderPreviews() {
         QImageWriter writer(&buffer, "JPG");
         writer.setQuality(85);
         if (!writer.write(preview)) {
-            cerr << "Error converting the preview to JPEG: " << writer.errorString() << endl;
+            std::cerr << "Error converting the preview to JPEG: " << writer.errorString() << std::endl;
             previewWidth = 0;
         }
     }
@@ -525,7 +523,7 @@ void DngFloatWriter::writeRawData() {
                 size_t thisTileLength = y + tileLength > height ? height - y : tileLength;
                 size_t thisTileWidth = x + tileWidth > width ? width - x : tileWidth;
                 if (thisTileLength != tileLength || thisTileWidth != tileWidth) {
-                    fill_n(uBuffer, dstLen, 0);
+                    std::fill_n(uBuffer, dstLen, 0);
                 }
                 for (size_t row = 0; row < thisTileLength; ++row) {
                     Bytef * dst = uBuffer + row*tileWidth*bytesps;

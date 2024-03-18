@@ -25,9 +25,8 @@
 #include "Histogram.hpp"
 #include "Log.hpp"
 #include "RawParameters.hpp"
-using namespace std;
-using namespace hdrmerge;
 
+namespace hdrmerge {
 
 void Image::ResponseFunction::setLinear(double slope) {
     threshold = 65535;
@@ -260,4 +259,6 @@ uint16_t Image::getMaxAround(size_t x, size_t y) const {
         if (x < width + dx - 1) result = std::max(result, (*this)(x + 1, y + 1));
     }
     return result;
+}
+
 }

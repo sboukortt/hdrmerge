@@ -25,8 +25,6 @@
 #include <QStandardPaths>
 #include <QStorageInfo>
 
-using namespace std;
-
 namespace hdrmerge {
 
 QList<QUrl> getStdUrls(const QString additionalPath)

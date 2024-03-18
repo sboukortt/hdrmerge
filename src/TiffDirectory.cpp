@@ -22,7 +22,8 @@
 
 #include <algorithm>
 #include "TiffDirectory.hpp"
-using namespace hdrmerge;
+
+namespace hdrmerge {
 
 void IFD::addEntry(uint16_t tag, uint16_t type, uint32_t count, const void * data) {
     uint32_t newSize = entryData.size();
@@ -82,4 +83,6 @@ IFD::DirEntry * IFD::getEntry(uint16_t tag) {
     auto it = entries.begin();
     while (it != entries.end() && it->tag != tag) it++;
     return it == entries.end() ? nullptr : &(*it);
+}
+
 }

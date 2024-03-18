@@ -21,8 +21,8 @@
  */
 
 #include "EditableMask.hpp"
-using namespace hdrmerge;
 
+namespace hdrmerge {
 
 void EditableMask::startAction(bool add, int layer) {
     editActions.erase(nextAction, editActions.end());
@@ -75,4 +75,6 @@ QRect EditableMask::modifyLayer(const std::list<QPoint> & points, int layer) {
         }
         return a;
     }
+}
+
 }

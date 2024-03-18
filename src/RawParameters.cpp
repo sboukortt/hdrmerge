@@ -30,10 +30,8 @@
 #include <exiv2/exiv2.hpp>
 #include "Log.hpp"
 #include "RawParameters.hpp"
-using namespace hdrmerge;
-using namespace std;
-using namespace std::placeholders;
 
+namespace hdrmerge {
 
 RawParameters::RawParameters() : width(0), height(0), rawWidth(0), rawHeight(0), topMargin(0), leftMargin(0), max(0),
 black(0), maxBlack(0), cblack{}, preMul{}, camMul{}, camXyz{}, rgbCam{}, isoSpeed(0.0), shutter(0.0), aperture(0.0), colors(0) {}
@@ -189,14 +187,14 @@ void RawParameters::fromLibRaw(LibRaw & rawData) {
     rawHeight = r.sizes.raw_height;
     topMargin = r.sizes.top_margin;
     leftMargin = r.sizes.left_margin;
-    auto fcol = std::bind(&LibRaw::fcol, &rawData, _1, _2);
+    auto fcol = std::bind(&LibRaw::fcol, &rawData, std::placeholders::_1, std::placeholders::_2);
     FC.setPattern(r.idata.filters, fcol);
     colors = r.idata.colors;
     cdesc = r.idata.cdesc;
     max = r.color.maximum;
     black = r.color.black;
     if(r.color.cblack[4] * r.color.cblack[5] == 0) {
-        copy_n(r.color.cblack, 4, cblack);
+        std::copy_n(r.color.cblack, 4, cblack);
     } else if (r.color.cblack[4] * r.color.cblack[5] == 4) {
         for (int c = 0; c < 4; c++) {
             cblack[FC(c / 2, c % 2)] = r.color.cblack[6 + c / 2 % r.color.cblack[4] * r.color.cblack[5] + c % 2 % r.color.cblack[5]];
@@ -208,13 +206,13 @@ void RawParameters::fromLibRaw(LibRaw & rawData) {
         }
     }
     adjustBlack();
-    copy_n(r.color.pre_mul, 4, preMul);
-    copy_n(r.color.cam_mul, 4, camMul);
+    std::copy_n(r.color.pre_mul, 4, preMul);
+    std::copy_n(r.color.cam_mul, 4, camMul);
     if (camMul[0] == 0 || camMul[0] == -1) {
         Log::debug("Invalid camera white balance: ", camMul[0], ' ', camMul[1], ' ', camMul[2], ' ', camMul[3]);
         camMul[0] = 0;
     }
-    copy_n((float *)r.color.rgb_cam, 4*3, (float *)rgbCam);
+    std::copy_n((float *)r.color.rgb_cam, 4*3, (float *)rgbCam);
     isoSpeed = r.other.iso_speed;
     shutter = r.other.shutter;
     aperture = r.other.aperture;
@@ -241,7 +239,7 @@ void RawParameters::fromLibRaw(LibRaw & rawData) {
         case 6: tiffOrientation = 6; break;
         default: tiffOrientation = 9; break;
     }
-    copy_n((float *)r.color.cam_xyz, 3*4, (float *)camXyz);
+    std::copy_n((float *)r.color.cam_xyz, 3*4, (float *)camXyz);
     if (!camXyz[0][0]) {
         calculateCamXyz();
     }
@@ -326,7 +324,7 @@ void RawParameters::autoWB(const Array2D<uint16_t> & image) {
         if (dsum[c] > 0.0) {
             camMul[c] = dcount[c] / dsum[c];
         } else {
-            copy_n(preMul, 4, camMul);
+            std::copy_n(preMul, 4, camMul);
             break;
         }
     }
@@ -336,7 +334,9 @@ void RawParameters::autoWB(const Array2D<uint16_t> & image) {
 void RawParameters::dumpInfo() const {
     Log::debugN(QFileInfo(fileName).fileName(), ": ", width, 'x', height, " (", rawWidth, 'x', rawHeight, '+', leftMargin, '+', topMargin);
     Log::debug(", by ", maker, ' ' , model, ", ", isoSpeed, "ISO 1/", (1.0/shutter), "sec f", aperture, " EV:", logExp());
-    Log::debugN(hex, FC.getFilters(), dec, ' ', cdesc, ", sat ", max, ", black ", black, ", flip ", flip);
+    Log::debugN(std::hex, FC.getFilters(), std::dec, ' ', cdesc, ", sat ", max, ", black ", black, ", flip ", flip);
     Log::debugN(", wb: ", camMul[0], ' ', camMul[1], ' ', camMul[2], ' ', camMul[3]);
     Log::debug(", cblack: ", cblack[0], ' ', cblack[1], ' ', cblack[2], ' ', cblack[3]);
+}
+
 }

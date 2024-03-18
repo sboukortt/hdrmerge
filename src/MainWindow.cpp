@@ -44,9 +44,8 @@
 #include "DngPropertiesDialog.hpp"
 #include "LoadOptionsDialog.hpp"
 #include "FileSystem.hpp"
-using namespace std;
-using namespace hdrmerge;
 
+namespace hdrmerge {
 
 class ProgressDialog : public QProgressDialog , public ProgressIndicator {
 public:
@@ -388,4 +387,6 @@ void MainWindow::setToolFromKey() {
     if ((mods & Qt::ShiftModifier) && addGhostAction->isEnabled() && !previewArea->isDragging()) addGhostAction->setChecked(true);
     else if ((mods & Qt::ControlModifier) && rmGhostAction->isEnabled() && !previewArea->isDragging()) rmGhostAction->setChecked(true);
     else lastTool->setChecked(true);
+}
+
 }

@@ -29,8 +29,8 @@
 #include <QBitmap>
 #include <QAction>
 #include "Log.hpp"
-using namespace hdrmerge;
 
+namespace hdrmerge {
 
 PreviewWidget::PreviewWidget(ImageStack & s, QWidget * parent) : QWidget(parent), stack(s),
 width(0), height(0), flip(0), addPixels(false), rmPixels(false), layer(0), radius(5),
@@ -242,4 +242,6 @@ void PreviewWidget::redo() {
         QRect redoRect = stack.getMask().redo();
         render(QRect(unrotate(redoRect.topLeft()), unrotate(redoRect.bottomRight())));
     }
+}
+
 }

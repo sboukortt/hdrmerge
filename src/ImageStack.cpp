@@ -33,9 +33,7 @@
     #include <x86intrin.h>
 #endif
 
-using namespace std;
-using namespace hdrmerge;
-
+namespace hdrmerge {
 
 int ImageStack::addImage(Image && i) {
     if (images.empty()) {
@@ -151,12 +149,12 @@ void ImageStack::align() {
 void ImageStack::crop() {
     int dx = 0, dy = 0;
     for (auto & i : images) {
-        int newDx = max(dx, i.getDeltaX());
-        int bound = min(dx + width, i.getDeltaX() + i.getWidth());
+        int newDx = std::max(dx, i.getDeltaX());
+        int bound = std::min(dx + width, i.getDeltaX() + i.getWidth());
         width = bound > newDx ? bound - newDx : 0;
         dx = newDx;
-        int newDy = max(dy, i.getDeltaY());
-        bound = min(dy + height, i.getDeltaY() + i.getHeight());
+        int newDy = std::max(dy, i.getDeltaY());
+        bound = std::min(dy + height, i.getDeltaY() + i.getHeight());
         height = bound > newDy ? bound - newDy : 0;
         dy = newDy;
     }
@@ -242,9 +240,8 @@ static Array2D<uint8_t> fattenMask(const Array2D<uint8_t> & mask, int radius) {
 
     #pragma omp parallel
     {
-        unique_ptr<uint8_t[]> buffer(new uint8_t[width * (radius + 1)]);
-        unique_ptr<uint8_t *[]> maxArray;  // caches the largest values for each column
-        maxArray.reset(new uint8_t *[width + 2 * radius]);
+        auto buffer = std::make_unique<uint8_t[]>(width * (radius + 1));
+        auto maxArray = std::make_unique<uint8_t *[]>(width + 2 * radius);  // caches the largest values for each column
         for (int i = 0; i < radius; i++) {
             maxArray[i] = buffer.get();
         }
@@ -471,4 +468,6 @@ Array2D<float> ImageStack::compose(const RawParameters & params, int featherRadi
     }
 
     return dst;
+}
+
 }
