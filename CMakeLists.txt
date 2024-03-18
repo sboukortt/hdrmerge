@@ -33,7 +33,8 @@ set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED Widgets)
 
-find_package(LibRaw REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LibRaw REQUIRED IMPORTED_TARGET libraw libraw_r)
 find_package(exiv2 REQUIRED)
 find_package(ZLIB REQUIRED)
 
@@ -63,7 +64,6 @@ else()
 endif()
 
 include_directories(
-    "${LibRaw_INCLUDE_DIR}"
     "${ZLIB_INCLUDE_DIRS}"
     "${ALGLIB_INCLUDE_DIRS}"
 )
@@ -152,7 +152,7 @@ set(hdrmerge_translations
 
 # Libs
 set(hdrmerge_libs
-    "${LibRaw_r_LIBRARIES}"
+    PkgConfig::LibRaw
     exiv2lib
     "${ZLIB_LIBRARIES}"
 )
