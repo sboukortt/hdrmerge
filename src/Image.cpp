@@ -150,9 +150,8 @@ void Image::computeResponseFunction(const Image & r) {
         }
     }
     if (i >= max/8) {
-        alglib::ae_int_t info;
         alglib::spline1dfitreport rep;
-        alglib::spline1dfitpenalized(values, adjValues, i, 200, 3, info, response.nonLinear, rep);
+        alglib::spline1dfit(values, adjValues, i, 200, 3, response.nonLinear, rep);
         response.linear = alglib::spline1dcalc(response.nonLinear, response.threshold) / response.threshold;
     } else {
         response.threshold = 65535;

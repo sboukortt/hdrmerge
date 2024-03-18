@@ -234,7 +234,7 @@ if(APPLE)
 endif()
 
 if(TARGET alglib)
-    target_compile_definitions(alglib PUBLIC AE_COMPILE_INTCOMP)
+    target_compile_definitions(alglib PUBLIC AE_COMPILE_SPLINE1D)
 endif()
 
 if(WIN32)
