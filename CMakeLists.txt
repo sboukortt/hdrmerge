@@ -59,7 +59,7 @@ if(WIN32 OR APPLE)
     )
     target_compile_definitions(alglib PUBLIC AE_COMPILE_SPLINE1D)
 else()
-    find_package(Alglib REQUIRED)
+    find_package(ALGLIB REQUIRED)
 endif()
 
 include_directories(
