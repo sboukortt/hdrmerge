@@ -119,26 +119,26 @@ void MainWindow::createWidgets() {
 
 void MainWindow::createActions() {
     loadImagesAction = new QAction(tr("&Open raw images..."), this);
-    loadImagesAction->setShortcut(tr("Ctrl+O"));
+    loadImagesAction->setShortcut(QKeySequence::Open);
     connect(loadImagesAction, SIGNAL(triggered()), this, SLOT(loadImages()));
 
     quitAction = new QAction(tr("&Quit"), this);
-    quitAction->setShortcut(tr("Ctrl+Q"));
+    quitAction->setShortcut(QKeySequence::Quit);
     connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 
     undoAction = new QAction(tr("Undo"), this);
-    undoAction->setShortcut(QString("Ctrl+z"));
+    undoAction->setShortcut(QKeySequence::Undo);
     connect(undoAction, SIGNAL(triggered()), preview, SLOT(undo()));
 
     redoAction = new QAction(tr("Redo"), this);
-    redoAction->setShortcut(QString("Ctrl+Shift+z"));
+    redoAction->setShortcut(QKeySequence::Redo);
     connect(redoAction, SIGNAL(triggered()), preview, SLOT(redo()));
 
     aboutAction = new QAction(tr("&About..."), this);
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
 
     mergeAction = new QAction(tr("&Save HDR..."), this);
-    mergeAction->setShortcut(tr("Ctrl+S"));
+    mergeAction->setShortcut(QKeySequence::Save);
     mergeAction->setEnabled(false);
     connect(mergeAction, SIGNAL(triggered()), this, SLOT(saveResult()));
 
