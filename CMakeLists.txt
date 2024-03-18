@@ -34,7 +34,7 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt6 REQUIRED Widgets)
 
 find_package(LibRaw REQUIRED)
-find_package(Exiv2 REQUIRED)
+find_package(exiv2 REQUIRED)
 find_package(ZLIB REQUIRED)
 
 # Commented-out as it doesn't link
@@ -64,7 +64,6 @@ endif()
 
 include_directories(
     "${LibRaw_INCLUDE_DIR}"
-    "${EXIV2_INCLUDE_DIR}"
     "${ZLIB_INCLUDE_DIRS}"
     "${ALGLIB_INCLUDE_DIRS}"
 )
@@ -154,15 +153,14 @@ set(hdrmerge_translations
 # Libs
 set(hdrmerge_libs
     "${LibRaw_r_LIBRARIES}"
-    "${EXIV2_LIBRARY}"
+    exiv2lib
     "${ZLIB_LIBRARIES}"
 )
 
 if(WIN32)
-    get_filename_component(LIB_PATH "${EXIV2_LIBRARY}" PATH)
-    find_library(EXPAT_LIBRARY libexpat.a "${LIB_PATH}")
-    find_library(ICONV_LIBRARY libiconv.a "${LIB_PATH}")
-    find_library(GETTEXT_LIBRARY libintl.a "${LIB_PATH}")
+    find_library(EXPAT_LIBRARY libexpat.a)
+    find_library(ICONV_LIBRARY libiconv.a)
+    find_library(GETTEXT_LIBRARY libintl.a)
     set(hdrmerge_libs
         ${hdrmerge_libs}
         "${EXPAT_LIBRARY}"
