@@ -128,7 +128,6 @@ void LoadOptionsDialog::addFiles() {
 
 
     QFileDialog loadDialog(this, tr("Select raw photos"), lastDirSetting.isNull() ? QDir::currentPath() : QDir(lastDirSetting.toString()).absolutePath(), filter);
-    loadDialog.setOptions(QFileDialog::DontUseNativeDialog);
     loadDialog.setAcceptMode(QFileDialog::AcceptOpen);
     loadDialog.setFileMode(QFileDialog::ExistingFiles);
     QList<QUrl> urls = getStdUrls();

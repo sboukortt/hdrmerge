@@ -340,7 +340,6 @@ void MainWindow::saveResult() {
         }
 
         QFileDialog saveDialog(this, tr("Save DNG file"), name, tr("Digital Negatives (*.dng)"));
-        saveDialog.setOptions(QFileDialog::DontUseNativeDialog);
         saveDialog.setAcceptMode(QFileDialog::AcceptSave);
         saveDialog.setFileMode(QFileDialog::AnyFile);
         saveDialog.setOption(QFileDialog::DontConfirmOverwrite, false);
