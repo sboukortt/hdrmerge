@@ -16,7 +16,7 @@ if(WIN32 OR APPLE)
     message(STATUS "ALGLIB_ROOT = ${ALGLIB_ROOT}")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-unknown-pragmas")
+add_compile_options(-Wall -Wno-unknown-pragmas)
 set(PLATFORM "")
 
 # Required and optional packages
@@ -32,9 +32,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 find_package(Qt6 REQUIRED Widgets)
-
-#include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS})
 
 find_package(LibRaw REQUIRED)
 find_package(Exiv2 REQUIRED)
@@ -176,7 +173,6 @@ if(WIN32)
         imm32
         winmm
     )
-    remove_definitions(-DQT_DLL)
 else()
     set(hdrmerge_libs
         "${hdrmerge_libs}"
@@ -236,7 +232,7 @@ if(WIN32)
     # WARNING: ImageIO class need QImage which need Qt6::Widgets
     #          Launcher.cpp need QApplication which need Qt6::Widgets
     target_link_libraries(hdrmerge-nogui ${STRIP} ${hdrmerge_libs} Qt6::Widgets)
-    set_target_properties(hdrmerge-nogui PROPERTIES COMPILE_DEFINITIONS "NO_GUI")
+    target_compile_definitions(hdrmerge-nogui PRIVATE "NO_GUI")
     # Create the installer with makensis
     find_program(MAKENSIS_EXECUTABLE makensis.exe PATH_SUFFIXES "NSIS/Bin")
     if(MAKENSIS_EXECUTABLE)
